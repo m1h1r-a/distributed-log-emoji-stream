@@ -8,7 +8,7 @@ import requests
 from kafka import KafkaConsumer
 
 API_URL = "http://127.0.0.1:5000"
-EMOJIS = ["🔥", "😂", "😢", "😎", "😡", "🏏", "🤡"]
+EMOJIS = ["🔥", "😂", "😢", "😎", "😡", "🏏", "🤡","🐐"]
 CLUSTERS = ["c1", "c2", "c3"]
 
 CLIENTS = []
@@ -40,8 +40,8 @@ def send_emoji(client_id):
             if response.status_code == 200:
                 print(f"[SENT] [{emoji_type}]")
 
-            time.sleep(1)
-            # time.sleep(0.05)
+            # time.sleep(1)
+            time.sleep(0.05)
 
         except requests.exceptions.RequestException as e:
             print(f"\n[Client {client_id}] Error sending emoji: {e}")

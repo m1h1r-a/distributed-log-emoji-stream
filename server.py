@@ -8,11 +8,33 @@ from kafka import KafkaProducer
 
 app = Flask(__name__)
 
+producer = KafkaProducer(
+    bootstrap_servers=["localhost:9092"],
+    value_serializer=lambda v: json.dumps(v).encode("utf-8"),
+)
+
+
+FLUSH_INTERVAL = 0.5
+
+def start_producer_flush(producer, interval):
+    def flush_loop():
+        while True:
+            try:
+                producer.flush()
+            except Exception as e:
+                print(f"Error during flush: {e}")
+            time.sleep(interval)
+    
+    threading.Thread(target=flush_loop, daemon=True).start()
+
+start_producer_flush(producer, FLUSH_INTERVAL)
 
 @app.route("/emoji", methods=["POST"])
 def emoji_server():
     try:
         data = request.get_json()
+
+        producer.send("emoji_topic", value=data)
         print(f"DATA {data}")
         print()
 
