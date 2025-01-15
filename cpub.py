@@ -9,7 +9,7 @@ import requests
 from flask import Flask, jsonify, request
 from kafka import KafkaConsumer, KafkaProducer
 
-NODE_ID = 1
+NODE_ID = 3
 
 heartbeat = {
     "node_id": NODE_ID,
@@ -49,16 +49,45 @@ def consume_publish():
         try:
             data = message.value  # Get the message value (processed data)
             print(f"Received data from main_topic: {data}")
-            
+
             log = {
                 "log_id": str(uuid.uuid4()),
                 "node_id": NODE_ID,
                 "log_level": "INFO",
                 "message_type": "LOG",
-                "message": "Service Running",
-                "service_name": "InventoryService",
+                "message": f"[PUBLISHED EMOJI {data['emoji_type']}]",
+                "service_name": "PUBLISHER",
                 "timestamp": time.time(),
             }
+
+        except:
+            log = {
+                "log_id": str(uuid.uuid4()),
+                "node_id": NODE_ID,
+                "log_level": "ERROR",
+                "message_type": "LOG",
+                "message": f"[FAILED TO PUBLISH EMOJI {data['emoji_type']}]",
+                "service_name": "PUBLISHER",
+                "error_details": {
+                    "error_code": str(uuid.uuid4()),
+                    "error_message": f"[FAILED TO SEND EMOJI {data['emoji_type']}]",
+                },
+                "timestamp": time.time(),
+            }
+
+        try:
+            response = requests.post("http://localhost:5003/cpub-logs", json=log)
+
+            if response.status_code == 200:
+                print("Log Sent")
+            else:
+                print(f"Failed to send log: {response.status_code}")
+
+            time.sleep(1)
+
+        except:
+            print()
+            print("LOG PUBLSHING STOPPED!")
 
         # Send the same data to all cluster topics
         for cluster_topic, producer in producers.items():
@@ -66,5 +95,18 @@ def consume_publish():
             print(f"Sent data to {cluster_topic}: {data}")
 
 
+def send_hearbeat():
+    while True:
+        response = requests.post("http://localhost:5003/heartbeat", json=heartbeat)
+
+        if response.status_code == 200:
+            print("HEARTBEAT SENT")
+        else:
+            print(f"Failed to send HEARTBEAT: {response.status_code}")
+
+        time.sleep(3)
+
+
 if __name__ == "__main__":
+    threading.Thread(target=send_hearbeat).start()
     consume_publish()
