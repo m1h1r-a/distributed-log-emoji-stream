@@ -3,7 +3,7 @@ import threading
 import time
 
 import requests
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, request
 from kafka import KafkaProducer
 
 app = Flask(__name__)
@@ -16,6 +16,7 @@ producer = KafkaProducer(
 
 FLUSH_INTERVAL = 0.5
 
+
 def start_producer_flush(producer, interval):
     def flush_loop():
         while True:
@@ -24,10 +25,12 @@ def start_producer_flush(producer, interval):
             except Exception as e:
                 print(f"Error during flush: {e}")
             time.sleep(interval)
-    
+
     threading.Thread(target=flush_loop, daemon=True).start()
 
+
 start_producer_flush(producer, FLUSH_INTERVAL)
+
 
 @app.route("/emoji", methods=["POST"])
 def emoji_server():
