@@ -65,5 +65,6 @@ def receive_final_data():
 
 
 if __name__ == "__main__":
+    print(f"JOINED [{clus}] [{subs}]")
     threading.Thread(target=send_emoji, args=(1,)).start()
     threading.Thread(target=receive_final_data).start()
