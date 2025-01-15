@@ -1,17 +1,19 @@
 import json
+import random
 import sys
 
 from kafka import KafkaConsumer, KafkaProducer
-
-# Cluster topic to listen from
-CLIENT_TOPIC = sys.argv[1]
-
 
 SUBSCRIBERS = [
     "s1",
     "s2",
     "s3",
 ]
+
+CLUSTERS = ["c1", "c2", "c3"]
+
+# CLIENT_TOPIC = random.choice(CLUSTERS)
+CLIENT_TOPIC = sys.argv[1]
 
 
 def consume_publish():
@@ -40,8 +42,9 @@ def consume_publish():
 
         # Send the same data to all cluster topics
         for cluster_topic, producer in producers.items():
-            producer.send(cluster_topic, value=data)
-            print(f"Sent data to {cluster_topic}: {data}")
+            topic = CLIENT_TOPIC + cluster_topic
+            producer.send(topic, value=data)
+            print(f"[SENT {topic}] [{data}]")
 
 
 if __name__ == "__main__":
