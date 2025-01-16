@@ -55,7 +55,7 @@ def consume_publish():
                 "node_id": NODE_ID,
                 "log_level": "INFO",
                 "message_type": "LOG",
-                "message": f"[PUBLISHED EMOJI {data['emoji_type']}]",
+                "message": f"[PUBLISHED EMOJI {data['max_emoji']}]",
                 "service_name": "PUBLISHER",
                 "timestamp": time.time(),
             }
@@ -66,11 +66,11 @@ def consume_publish():
                 "node_id": NODE_ID,
                 "log_level": "ERROR",
                 "message_type": "LOG",
-                "message": f"[FAILED TO PUBLISH EMOJI {data['emoji_type']}]",
+                "message": f"[FAILED TO PUBLISH EMOJI {data['max_emoji']}]",
                 "service_name": "PUBLISHER",
                 "error_details": {
                     "error_code": str(uuid.uuid4()),
-                    "error_message": f"[FAILED TO SEND EMOJI {data['emoji_type']}]",
+                    "error_message": f"[FAILED TO SEND EMOJI {data['max_emoji']}]",
                 },
                 "timestamp": time.time(),
             }
@@ -96,15 +96,19 @@ def consume_publish():
 
 
 def send_hearbeat():
-    while True:
-        response = requests.post("http://localhost:5003/heartbeat", json=heartbeat)
 
-        if response.status_code == 200:
-            print("HEARTBEAT SENT")
-        else:
-            print(f"Failed to send HEARTBEAT: {response.status_code}")
+    try:
+        while True:
+            response = requests.post("http://localhost:5003/heartbeat", json=heartbeat)
 
-        time.sleep(3)
+            if response.status_code == 200:
+                print("HEARTBEAT SENT")
+            else:
+                print(f"Failed to send HEARTBEAT: {response.status_code}")
+
+            time.sleep(3)
+    except:
+        print(f"Server not available")
 
 
 if __name__ == "__main__":

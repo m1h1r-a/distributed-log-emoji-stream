@@ -8,15 +8,14 @@ from kafka import KafkaConsumer, KafkaProducer
 
 consumer = KafkaConsumer(
     "info_log",
-    "warn_log",
     "error_log",
     value_deserializer=lambda x: json.loads(x.decode("utf-8")),
 )
 
 heartbeat = KafkaConsumer(
-    "inventoryHeartbeat",
-    "orderHeartbeat",
-    "paymentHeartbeat",
+    "clientHeartbeat",
+    "serverHeartbeat",
+    "cpubHeartbeat",
     value_deserializer=lambda y: json.loads(y.decode("utf-8")),
 )
 
@@ -46,11 +45,7 @@ def receive_logs():
 
         if log["log_level"] == "INFO":
             app_logger.info(json.dumps(log))
-        elif log["log_level"] == "WARN":
-            print("WARNING LOG:")
-            print(json.dumps(log, indent=4))  # Pretty print for terminal only
-            print()
-            app_logger.warning(json.dumps(log))  # Regular JSON for log file
+
         elif log["log_level"] == "ERROR":
             print("ERROR LOG:")
             print(json.dumps(log, indent=4))  # Pretty print for terminal only

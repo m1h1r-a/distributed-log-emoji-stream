@@ -110,5 +110,5 @@ def send_hearbeat():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
     threading.Thread(target=send_hearbeat).start()
+    app.run(debug=True)

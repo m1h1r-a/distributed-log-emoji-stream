@@ -30,7 +30,7 @@ def receive_logs():
 def receive_heartbeat():
     heartbeat = request.json
 
-    producer.send("inventoryHeartbeat", request.json)
+    producer.send("serverHeartbeat", request.json)
     producer.flush()
 
     print(

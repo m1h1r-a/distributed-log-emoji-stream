@@ -18,11 +18,6 @@ def receive_logs():
         producer.flush()
         print(f"Received & Sent log: \n{json.dumps(log,indent = 4)}")
 
-    elif log["log_level"] == "WARN":
-        producer.send("warn_log", log)
-        producer.flush()
-        print(f"Received & Sent log: \n{json.dumps(log,indent = 4)}")
-
     elif log["log_level"] == "ERROR":
         producer.send("error_log", log)
         producer.flush()
@@ -35,7 +30,7 @@ def receive_logs():
 def receive_heartbeat():
     heartbeat = request.json
 
-    producer.send("inventoryHeartbeat", request.json)
+    producer.send("cpubHeartbeat", request.json)
     producer.flush()
 
     print(
@@ -46,4 +41,4 @@ def receive_heartbeat():
 
 
 if __name__ == "__main__":
-    app.run(port=5000)
+    app.run(port=5003)

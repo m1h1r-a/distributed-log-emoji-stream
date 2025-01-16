@@ -109,7 +109,7 @@ def send_emoji(client_id):
 
             time.sleep(1)
 
-        except KeyboardInterrupt:
+        except:
             print()
             print("Emoji & Log Generation Stopped!")
 
