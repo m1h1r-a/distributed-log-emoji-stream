@@ -97,8 +97,8 @@ def consume_publish():
 
 def send_hearbeat():
 
-    try:
-        while True:
+    while True:
+        try:
             response = requests.post("http://localhost:5003/heartbeat", json=heartbeat)
 
             if response.status_code == 200:
@@ -107,8 +107,9 @@ def send_hearbeat():
                 print(f"Failed to send HEARTBEAT: {response.status_code}")
 
             time.sleep(3)
-    except:
-        print(f"Server not available")
+        except:
+            print(f"Server not available")
+            time.sleep(10)
 
 
 if __name__ == "__main__":
